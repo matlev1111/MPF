@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import math
 
 
 def matrix_exp_left(W,X,p):
@@ -34,3 +34,29 @@ def matrix_exp_right(W,X,p):
 
 def hadamard_prod(A,B,p):
     return np.mod(np.multiply(A,B),p)
+
+def mulinv(number, modulo):
+    if(math.gcd(number, modulo) != 1):
+        #"Inverse element does not exist"
+        return -1
+    else:
+        m, n = np.int64(number),np.int64(modulo)
+        s,t,u,v = np.int64(1), np.int64(0), np.int64(0), np.int64(1)
+        while(n > 0) :
+            q=np.int64(math.floor((np.double(m))/np.double(n)))
+            r=np.int64(m-q*n)
+            m, n =n, r
+            u, s =s-q*u, u
+            v, t =t-q*v, v
+            out = s
+            if(out < 0):
+                out = modulo+out
+    return out
+
+def hadamard_inv(M,p):
+    H = None
+    fm = np.vectorize(lambda x: mulinv(x,p))
+    H=fm(M)
+    return H
+
+

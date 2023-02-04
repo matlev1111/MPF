@@ -19,3 +19,6 @@ M = [[2,2,3,3],[2,2,4,4],[2,2,3,3],[2,2,4,4]]
 
 ats = ESakCipher(G,X,M,Y,p)
 print(ats)
+
+#To do:
+#Test mul_inv, hadamard_inv and ESakDecryption

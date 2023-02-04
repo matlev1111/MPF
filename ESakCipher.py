@@ -52,3 +52,13 @@ def ESakCipher(G,X,M,Y,p):
     C2 = hadamard_prod(Fmap, YFY,p)
     return C2
 
+def ESakDecryption(G,ind, YY, X, C,p):
+    q = (p-1)//2
+    FF = hadamard_inv(map(p,G,X),p)
+    FCX = Gmap(G,np.mod(C-X,q))
+    prod = hadamard_prod(FF,FCX,p)
+    YYprod = matrix_exp_right(prod,YY,p)
+    YYprodYY = matrix_exp_left(YYprod,YY,p)
+    M_new = np.mod(imap(ind,YYprodYY,p)-X,q)
+
+
