@@ -31,3 +31,6 @@ def matrix_exp_right(W,X,p):
                 tmp = np.mod(np.power(W[i,k],X[k,j]),p)
                 M[i,j] = M[i,j]*tmp % p
     return M
+
+def hadamard_prod(A,B,p):
+    return np.mod(np.multiply(A,B),p)
