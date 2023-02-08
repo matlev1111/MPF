@@ -8,11 +8,11 @@ def GenG(p):
     """
     q = (p-1)//2
     index = 3
-    while (np.mod(np.power(index,q),p) != 1 and np.mod(np.mod(np.power(index,1),p) * np.mod(np.power(index,2),p),p) != np.mod(np.power(index,1),p)):
+    while (mod_exp(index,q,p) != 1 and mod_exp(index,1,p) * mod_exp(index,2,p) != mod_exp(index,1,p)):
         index = index + 1
     numbers = []
     for i in range(q):
-        numbers.append(np.mod(np.power(index,i),p))
+        numbers.append(mod_exp(index,i,p))
     return index, numbers
 
 
@@ -54,11 +54,11 @@ def ESakCipher(G,X,M,Y,p):
 
 def ESakDecryption(G,ind, YY, X, C,p):
     q = (p-1)//2
-    FF = hadamard_inv(map(p,G,X),p)
-    FCX = Gmap(G,np.mod(C-X,q))
-    prod = hadamard_prod(FF,FCX,p)
+    FF = hadamard_inv(Gmap(G,X),p)
+    prod = hadamard_prod(FF,C,p)
     YYprod = matrix_exp_right(prod,YY,p)
     YYprodYY = matrix_exp_left(YYprod,YY,p)
     M_new = np.mod(imap(ind,YYprodYY,p)-X,q)
+    return M_new
 
 

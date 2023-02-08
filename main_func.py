@@ -1,6 +1,14 @@
 import numpy as np
 import math
 
+def mod_exp(g,n,p):
+    r = 1
+    while(n > 0):
+        if(np.mod(n,2) != 0):
+            r = np.mod(r*g,p)
+        n = math.floor(n/2)
+        g = np.mod(g*g,p)
+    return r
 
 def matrix_exp_left(W,X,p):
     """
@@ -13,9 +21,9 @@ def matrix_exp_left(W,X,p):
         for j in range(n1):
             M[i,j] = 1
             for k in range(m2):
-                tmp = np.mod(np.power(W[k,j],X[i,k]),p)
+                tmp = mod_exp(W[k,j],X[i,k],p)
                 M[i,j] = M[i,j]*tmp % p
-    return M
+    return M.astype('int32')
 
 def matrix_exp_right(W,X,p):
     """
@@ -28,9 +36,9 @@ def matrix_exp_right(W,X,p):
         for j in range(m1):
             M[i,j] = 1
             for k in range(n2):
-                tmp = np.mod(np.power(W[i,k],X[k,j]),p)
+                tmp = mod_exp(W[i,k],X[k,j],p)
                 M[i,j] = M[i,j]*tmp % p
-    return M
+    return M.astype('int32')
 
 def hadamard_prod(A,B,p):
     return np.mod(np.multiply(A,B),p)
@@ -58,5 +66,4 @@ def hadamard_inv(M,p):
     fm = np.vectorize(lambda x: mulinv(x,p))
     H=fm(M)
     return H
-
-
+    
