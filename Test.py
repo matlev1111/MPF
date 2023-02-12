@@ -35,9 +35,8 @@ Y = np.matrix([[215,     56,   121,   250],
 ats = ESakCipher(G,X,M,Y,p)
 print(ats)
 
-#To do:
-#Test hadamard_inv and ESakDecryption
-
 YY = Gauss_Jordan(Y,q)
 
 print(ESakDecryption(G,ind, YY, X, ats,p))
+
+#Test M16

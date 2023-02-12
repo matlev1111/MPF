@@ -1,10 +1,9 @@
 import numpy as np
-import math
 
-
-def Gauss_Jordan(A,p):
+def Gauss_Jordan(Am,p):
+    A = Am.copy()
     n = len(A)
-    B = np.eye(n)
+    B = np.eye(n). astype('int32')
     tikr = 1
     for i in range(n):
         A,B,tikr = In(A,B,i,n,p,tikr)

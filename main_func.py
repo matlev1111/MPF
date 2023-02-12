@@ -66,4 +66,17 @@ def hadamard_inv(M,p):
     fm = np.vectorize(lambda x: mulinv(x,p))
     H=fm(M)
     return H
+
+def Shifting_bits(row,k):
+    part = row[2:k+2]
+    return row[:2]+row[k+2:] + part
     
+
+
+"""
+function sf = Shifting_bits(row, k)
+
+part = row(1:k);
+sf = strcat(row(k+1:end), part);
+
+end"""
