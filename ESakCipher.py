@@ -24,7 +24,7 @@ def Gmap(index, mat):
     M = np.zeros(m)
     fm = np.vectorize(lambda x: index[x])
     M=fm(mat)
-    return M
+    return M.astype('int32')
 
 def imap(ind, num,p):
     """
@@ -36,16 +36,16 @@ def imap(ind, num,p):
     M=fm(num)
     return M
 
-def ESakCipher(G,X,M,Y,p):
+def ESakCipher(G,X,M,Y,p,q,Fmap):
     """
     G = GenG(p)
     X \in 
     M \in 
     Y \in Z_q \ {0}
     """
-    q = (p-1)//2
-    Fmap = Gmap(G,X)
-    C1 = np.mod(X+M,q)
+    #q = (p-1)//2
+    #Fmap = Gmap(G,X)
+    C1 = np.mod(X+M,q).astype('int32')
     F = Gmap(G,C1)
     YF = matrix_exp_left(F,Y,p)
     YFY = matrix_exp_right(YF,Y,p)

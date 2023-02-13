@@ -112,22 +112,3 @@ def perm_matrix(n,t):
     pag = np.mod(np.random.randint(1,np.power(2,t-2)+1,size=(n,n))*2-1,np.power(2,t-1))
     D = np.mod(B-B*A+pag*A, np.power(2,t-1))
     return D.astype('int32')
-"""
-function D = perm_matrix(n,t)
-A = eye(n);
-A = A(randperm(n),:);
-%poss = [];
-
-%for i = 1: 2^(t-2)
-%    poss = [poss (i-1)*2];
-%end
-
-B = mod(randi([1 2^(t-2)],n)*2,2^(t-1));
-%C = B-mod(B,2);
-pag = mod(randi([1 2^(t-1)],n)*2-1,2^(t-1));
-D = mod(B - B .* A + pag .* A,2^(t-1));
-%D = mod(C+A,2^(t-1));
-%EE = Gauss_Jordan(D,8);
-%mod(D*EE,8);
-end
-"""
