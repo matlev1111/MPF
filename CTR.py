@@ -37,7 +37,7 @@ def Forward(M, G, X, ind,rounds, p,q):
     return CF
 
 
-im = Image.open("linux.png").convert('RGB')#Image.open("coloredChips.png")
+im = Image.open("images/coloredChips.png").convert('RGB')#Image.open("coloredChips.png")
 X1 = np.asarray(im)
 
 
@@ -86,6 +86,6 @@ C = Forward(M1, G, X, ind, Nblocks, p, q)
 end = timer()
 print(timedelta(seconds=end-start))
 
-file = open('res/linux', 'wb')
+file = open('res/res1', 'wb')
 pickle.dump([C, s1, s2], file)
 file.close()
