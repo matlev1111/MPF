@@ -1,7 +1,6 @@
 import numpy as np
 import math
-from main_func import Shifting_bits
-import random
+from Basic_functions.main_func import Shifting_bits
 
 def m16mult(a, b, t):
     C = np.zeros([2])
@@ -100,8 +99,8 @@ def FormM(C, m, Ma, amount):
         #print(a/amount*100)
         for i in range(m):
             for j in range(m):
-                M[i,j,a,0] = Ma[C[i,j],0]
-                M[i,j,a,1] = Ma[C[i,j],1] 
+                M[i,j,a,0] = Ma[C[i,j, a],0]
+                M[i,j,a,1] = Ma[C[i,j, a],1] 
     return M.astype('int32')
 
 

@@ -5,8 +5,7 @@ from ESakCipher import *
 from timeit import default_timer as timer
 from datetime import timedelta
 import pickle
-from modes import E_sak_CTR as Forward, Form_pic_blocks 
-
+from modes import E_sak_CBC as Forward, Form_pic_blocks, Form_text_blocks
 """
 im = Image.open("coloredChips.png").convert('L')
 image = np.asarray(im)
@@ -14,60 +13,42 @@ Image.fromarray(image).show()
 im.show()
 """
 
-
-def CTR_F(m):
+def CBC_F(m):
     file_name = 'coloredChips'
     #Algorithm: M16, Esak
     file_folder = 'Esak'
     #Mode: CTR, CBC
-    mode = 'CTR'
+    mode = 'CBC'
     im = Image.open("images/coloredChips.png").convert('RGB')#Image.open("coloredChips.png")
     X1 = np.asarray(im)
-
-
     #m = 4
     p = 563
     q, G, X, Y, Z = Gen_parameters(m,p)
-    """X = np.matrix([
-
-        [95,    13,   205,   194],
-        [82,   187,   198,   156],
-    [209,   169,   219,   111],
-        [2,   147,    80,    17]
-    ])
-
-    Y = np.matrix([
-    [219,    30,   250,    21],
-        [95,    36,   224,    25],
-    [171,   154,   206,   224],
-    [208,   136,    15,   265]
-    ])
-    Z = np.matrix([
-    [192,    33,   210,   206],
-        [37,   180,   163,   272],
-    [203,    92,   207,   243],
-        [31,   183,    65,    24]
-    ])"""
     s1, s2, M1 = Form_pic_blocks(m, X1,3)
 
+    """M1 = Form_text_blocks(m, 'duom.txt')"""
+
+    IV = np.zeros([m,m], dtype=int)
     Nblocks = M1.shape[2]
+    #print(Nblocks)
 
     start = timer()
-    C = Forward(M1, G, X, Y, Nblocks, p, q)
+    C = Forward(IV,M1, G, X,Y,  Nblocks, p, q)
     end = timer()
     print(timedelta(seconds=end-start))
     return end-start
+
 TM = 0
 FT = []
 
 for m in range(3,11):
     for i in range(5):
         print(f"m = {m}")
-        TM += CTR_F(m)
+        TM += CBC_F(m)
     FT.append(TM/5)
 
 
-file = open(f'res/CTR_times', 'wb')
+file = open(f'res/CBC_times', 'wb')
 pickle.dump([FT], file)
 file.close()
 for i in range(len(FT)):

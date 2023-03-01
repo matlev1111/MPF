@@ -1,5 +1,5 @@
 from M16 import *
-from Gauss_Jordan import Gauss_Jordan
+from Basic_functions.Gauss_Jordan import Gauss_Jordan
 from timeit import default_timer as timer
 from datetime import timedelta
 
@@ -10,9 +10,11 @@ for a in range(256):
     Ma[a,1] = np.mod(a,np.power(2,t-1))
 
 nbits = 2
-m = 10
+m = 4
 M1 = np.random.randint(0,np.power(2,t-1),size=(m,m)).astype('int32')
 M = FormM(M1, m, Ma, 1)
+
+print("#",M.shape)
 delta = np.zeros([m,m,2]).astype('int32')
 delta[:,:,0] = np.random.randint(0,2,size=(m,m))
 Y2 = perm_matrix(m,t)
