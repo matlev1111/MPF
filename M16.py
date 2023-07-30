@@ -3,6 +3,9 @@ import math
 from Basic_functions.main_func import Shifting_bits
 
 def m16mult(a, b, t):
+    """
+    Multiplication operation defined over M_{2^t}
+    """
     C = np.zeros([2])
     C[0] = np.mod(a[0]+b[0],2)
     if(np.mod(a[1],2)==0):
@@ -16,6 +19,9 @@ def m16mult(a, b, t):
 
 
 def m16exp(a, n, t):
+    """
+    Power operation defined over M_{2^t}
+    """
     b = np.zeros([2])
     if(np.mod(a[0],2)):
         b[0] = np.mod(n,2)
@@ -30,6 +36,9 @@ def m16exp(a, n, t):
 
 
 def m16_matrix_exp_right(W,X,t):
+    """
+    MPF from the right side over M_{2^t}
+    """
     m, _, _ = W.shape
     _, n = X.shape
     B = np.zeros([m,n,2])
@@ -39,9 +48,12 @@ def m16_matrix_exp_right(W,X,t):
             B[i,j,1] = 0
             for k in range(m):
                 B[i,j,:] = m16mult(B[i,j,:], m16exp(W[i,k,:], X[k,j],t), t)
-    return B.astype('int32')
+    return B.astype('int64')
 
 def m16_matrix_exp_left(W,X,t):
+    """
+    MPF from the left side over M_{2^t}
+    """
     m, _, _ = W.shape
     _, n = X.shape
     B = np.zeros([m,n,2])
@@ -51,10 +63,13 @@ def m16_matrix_exp_left(W,X,t):
             B[i,j,1] = 0
             for k in range(m):
                 B[i,j,:] = m16mult(B[i,j,:], m16exp(W[k,j,:], X[i,k],t), t)
-    return B.astype('int32')
+    return B.astype('int64')
 
 
 def M16_Enc(M,delta, X,Y,t, nbits):
+    """
+    Encryption algorithm defined over M_{2^t}
+    """
     m,_ = X.shape
     M_inp = M.copy()
     M_inp[:,:,1] = np.mod(M_inp[:,:,1]+X,np.power(2,t-1))
@@ -69,16 +84,19 @@ def M16_Enc(M,delta, X,Y,t, nbits):
             C3[i,j] = int(Shifting_bits(bin(C2_2[i,j,0])+bin(C2_2[i,j,1])[2:].zfill(t-1),nbits),2)
             DX[i,j] = np.mod(int(bin(delta[i,j,0])+bin(X[i,j])[2:].zfill(t-1),2),np.power(2,t))
     C4 = np.mod(C3+DX, np.power(2,t))
-    return C4.astype('int32')
+    return C4.astype('int64')
 
 
 def M16_Dec(C,delta, X,YY,t, nbits):
+    """"
+    Decryption algorythm defined over M_{2^t}
+    """
     m,_ = X.shape
     DX = np.zeros([m,m])
     for i in range(m):
         for j in range(m):
             DX[i,j] = np.mod(int(bin(delta[i,j,0])+bin(X[i,j])[2:].zfill(t-1),2),np.power(2,t))
-    D1 = np.mod(C-DX, np.power(2,t)).astype('int32')
+    D1 = np.mod(C-DX, np.power(2,t)).astype('int64')
     D2 = np.zeros([m,m,2])
     D5 = D2.copy()
     for i in range(m):
@@ -90,10 +108,13 @@ def M16_Dec(C,delta, X,YY,t, nbits):
     D4 = m16_matrix_exp_left(D3, YY,t)
     D5[:,:,1] = np.mod(D4[:,:,1]-X, np.power(2,t-1))
     D5[:,:,0] = np.mod(delta[:,:,0]+D4[:,:,0],2)
-    return D5.astype('int32')
+    return D5.astype('int64')
 
 
 def FormM(C, m, Ma, amount):
+    """
+    Mapping M elements to M_b & M_a elements
+    """
     M = np.zeros([m,m,amount,2])
     for a in range(amount):
         #print(a/amount*100)
@@ -101,13 +122,38 @@ def FormM(C, m, Ma, amount):
             for j in range(m):
                 M[i,j,a,0] = Ma[C[i,j, a],0]
                 M[i,j,a,1] = Ma[C[i,j, a],1] 
-    return M.astype('int32')
+    return M.astype('int64')
 
 
 def perm_matrix(n,t):
+    """
+    Permutation matrix generation
+    """
     A = np.eye(n)
     A = np.random.permutation(A)
     B = np.mod(np.random.randint(1,np.power(2,t-2)+1,size=(n,n))*2,np.power(2,t-1))
     pag = np.mod(np.random.randint(1,np.power(2,t-2)+1,size=(n,n))*2-1,np.power(2,t-1))
     D = np.mod(B-B*A+pag*A, np.power(2,t-1))
-    return D.astype('int32')
+    return D.astype('int64')
+
+def MakeVector(m):
+    """
+    Constructin permutation vector
+    """
+    Vec = np.arange(0,m*m)
+    return np.random.permutation(Vec)
+
+def BuildPlaintext(VVec, m, M,pp):
+    """
+    Form plaintext using permutation vector mapping
+    """
+    if(VVec == None):
+        return M
+    index = 0
+    Vec = VVec[np.mod(M.sum(dtype='int64'),pp)]
+    NM = np.zeros(shape=M.shape)
+    for i in range(m):
+        for j in range(m):
+            NM[i,j] = M[Vec[index]//m,Vec[index]%m]
+            index += 1
+    return NM.astype('int64')

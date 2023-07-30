@@ -5,73 +5,54 @@ from ESakCipher import *
 from timeit import default_timer as timer
 from datetime import timedelta
 import pickle
-from modes import E_sak_CTR as Forward, Form_pic_blocks 
+import scipy.stats as stats
+from modes import E_sak_CTR as Forward, Form_pic_blocks , Form_text_blocks
 
-"""
-im = Image.open("coloredChips.png").convert('L')
-image = np.asarray(im)
-Image.fromarray(image).show()
-im.show()
-"""
-
-
-def CTR_F(m):
-    file_name = 'coloredChips'
+def CTR_F(m, file_name, save = False, rgb = 'L', nb = 8):
+    #file_name = 'linux'
     #Algorithm: M16, Esak
     file_folder = 'Esak'
     #Mode: CTR, CBC
     mode = 'CTR'
-    im = Image.open("images/coloredChips.png").convert('RGB')#Image.open("coloredChips.png")
+    im = Image.open(f"images/{file_name}").convert(rgb)#Image.open("coloredChips.png")
     X1 = np.asarray(im)
-
-
-    #m = 4
-    p = 563
+    if(nb == 4):
+        p = 47
+    elif (nb == 8):
+        p = 563
+    elif (nb == 16):
+        p = 131267
+    if(rgb == 'L'):
+        prgb = 1
+    else:
+        prgb = 3
     q, G, X, Y, Z = Gen_parameters(m,p)
-    """X = np.matrix([
-
-        [95,    13,   205,   194],
-        [82,   187,   198,   156],
-    [209,   169,   219,   111],
-        [2,   147,    80,    17]
-    ])
-
-    Y = np.matrix([
-    [219,    30,   250,    21],
-        [95,    36,   224,    25],
-    [171,   154,   206,   224],
-    [208,   136,    15,   265]
-    ])
-    Z = np.matrix([
-    [192,    33,   210,   206],
-        [37,   180,   163,   272],
-    [203,    92,   207,   243],
-        [31,   183,    65,    24]
-    ])"""
-    s1, s2, M1 = Form_pic_blocks(m, X1,3)
+    start = timer()
+    s1, s2, M1 = Form_pic_blocks(m, X1,prgb, nb = nb)
+    print("Generavimo laikai - ",timer()-start)
+    #M1 = Form_text_blocks(m, 'Generated.txt', nb = nb)
 
     Nblocks = M1.shape[2]
 
     start = timer()
-    C = Forward(M1, G, X, Y, Nblocks, p, q)
+    C = Forward(M1, G, X, Y, Z, Nblocks, p, q)
     end = timer()
-    print(timedelta(seconds=end-start))
+    print(timedelta(seconds=end-start))   
+    #unique, counts = np.unique(np.array(C), return_counts=True)
+    #q = int(q)
+    #print(stats.chisquare(f_obs=counts, f_exp=np.ones(q, dtype = 'int64')*(Nblocks*m*m/q)))
+    if(save):
+        file = open(f'res/{mode}/{file_folder}/{file_name}_4x4_addmod', 'wb')
+        pickle.dump([C, M1, s1, s2], file)
+        #pickle.dump([C, M1], file)
+        file.close()
     return end-start
 TM = 0
 FT = []
 
-for m in range(3,11):
-    for i in range(5):
-        print(f"m = {m}")
-        TM += CTR_F(m)
-    FT.append(TM/5)
+CTR_F(4, 'Generated8',save = False, nb = 16)
 
 
-file = open(f'res/CTR_times', 'wb')
-pickle.dump([FT], file)
-file.close()
-for i in range(len(FT)):
-    print(f"m = {i+3}, ",timedelta(seconds=FT[i]))
-"""file = open(f'res/{mode}/{file_folder}/{file_name}', 'wb')
-pickle.dump([C, M1, s1, s2], file)
-file.close()"""
+
+#CTR_F(4, 'Generated',save = True, nb = 8)
+

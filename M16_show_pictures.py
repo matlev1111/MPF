@@ -4,23 +4,25 @@ from PIL import Image
 
 #Filename: freely chosen
 file_name = 'coloredChips'
-#Algorithm: M16, Esak
-file_folder = 'Esak'
+#Algorithm: M16, ESak
+file_folder = 'AES'
 #Mode: CTR, CBC
 mode = 'CTR'
 #RGB: 1 - RGB; 0 - Grayscale
-rgb_TF = 0
+rgb_TF = 1
+rez_path = f"..\Figures\{mode}\AES\P{file_name}_RGB.jpg"
 
 file = open(f'res/{mode}/{file_folder}/{file_name}', 'rb')
+mode = 'CTR'
 data, M1, s1, s2 = pickle.load(file)
+
+print(data.shape)
 file.close()
 if(file_folder == 'ESak'):
     p = 563
     q = (p-1)/2
     data = np.mod(data,256)
 
-"""s1 = 392
-s2 = 520"""
 def Print_pic(C, s1, s2, d3):
     m = C[:,:,0].shape[0]
     if(d3):
@@ -38,7 +40,6 @@ def Print_pic(C, s1, s2, d3):
                 else:
                     FC[i*m:(i+1)*m,j*m:(j+1)*m] = C[:,:,indx]
                 indx += 1
-    print(np.array(FC))
     if(d3):
         im = Image.fromarray(FC[:,:,:].astype(np.uint8)).convert('RGB')
     else:
@@ -49,6 +50,8 @@ if(mode == 'CBC'):
     ans = Print_pic(data[:,:,1:], s1, s2, rgb_TF)
 elif(mode == 'CTR'):
     ans = Print_pic(data[:,:,:], s1, s2, rgb_TF)
-ans.show()
-ans2 = Print_pic(M1, s1, s2, rgb_TF)
-ans2.show()
+
+ans.save(rez_path)
+
+
+#ans.show()

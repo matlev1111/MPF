@@ -5,54 +5,53 @@ from ESakCipher import *
 from timeit import default_timer as timer
 from datetime import timedelta
 import pickle
+import scipy.stats as stats
 from modes import E_sak_CBC as Forward, Form_pic_blocks, Form_text_blocks
-"""
-im = Image.open("coloredChips.png").convert('L')
-image = np.asarray(im)
-Image.fromarray(image).show()
-im.show()
-"""
 
-def CBC_F(m):
-    file_name = 'coloredChips'
+def CBC_F(m, file_name, save = False, rgb = 'L', nb = 8):
+    #file_name = 'linux'
     #Algorithm: M16, Esak
     file_folder = 'Esak'
     #Mode: CTR, CBC
     mode = 'CBC'
-    im = Image.open("images/coloredChips.png").convert('RGB')#Image.open("coloredChips.png")
+    im = Image.open(f"images/{file_name}").convert(rgb)#Image.open("coloredChips.png")
     X1 = np.asarray(im)
-    #m = 4
-    p = 563
+    if(nb == 4):
+        p = 47
+    elif (nb == 8):
+        p = 563
+    elif (nb == 16):
+        p = 131267
+    if(rgb == 'L'):
+        prgb = 1
+    else:
+        prgb = 3
     q, G, X, Y, Z = Gen_parameters(m,p)
-    s1, s2, M1 = Form_pic_blocks(m, X1,3)
-
-    """M1 = Form_text_blocks(m, 'duom.txt')"""
+    start = timer()
+    s1, s2, M1 = Form_pic_blocks(m, X1,prgb, nb=nb)
+    print("Generavimo laikai - ",timer()-start)
+    #M1 = Form_text_blocks(m, 'Generated.txt', nb = nb)
 
     IV = np.zeros([m,m], dtype=int)
     Nblocks = M1.shape[2]
-    #print(Nblocks)
 
     start = timer()
-    C = Forward(IV,M1, G, X,Y,  Nblocks, p, q)
+    C = Forward(IV,M1, G, X,Y,Z,  Nblocks, p, q)
     end = timer()
     print(timedelta(seconds=end-start))
+    unique, counts = np.unique(np.array(C[:,:,1:]), return_counts=True)
+    q = int(q)
+    print(stats.chisquare(f_obs=counts, f_exp=np.ones(q, dtype = 'int64')*(Nblocks*m*m/q)))
+    if(save):
+        file = open(f'res/{mode}/{file_folder}/{file_name}_4x4_addmod', 'wb')
+        pickle.dump([C, M1, s1, s2], file)
+        #pickle.dump([C, M1], file)
+        file.close()
     return end-start
 
-TM = 0
-FT = []
 
-for m in range(3,11):
-    for i in range(5):
-        print(f"m = {m}")
-        TM += CBC_F(m)
-    FT.append(TM/5)
+CBC_F(4, 'cameraman.tif',save = False, nb = 16)
 
 
-file = open(f'res/CBC_times', 'wb')
-pickle.dump([FT], file)
-file.close()
-for i in range(len(FT)):
-    print(f"m = {i+3}, ",timedelta(seconds=FT[i]))
-"""file = open(f'res/{mode}/{file_folder}/{file_name}', 'wb')
-pickle.dump([C, M1, s1, s2], file)
-file.close()"""
+
+

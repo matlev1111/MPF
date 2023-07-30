@@ -2,12 +2,15 @@ import numpy as np
 import math
 
 def mod_exp(g,n,p):
+    """
+    Modular exponenet function
+    """
     r = 1
     while(n > 0):
         if(np.mod(n,2) != 0):
-            r = np.mod(r*g,p)
+            r = np.mod(np.multiply(r,g),p)
         n = math.floor(n/2)
-        g = np.mod(g*g,p)
+        g = np.mod(np.multiply(g,g),p)
     return r
 
 def matrix_exp_left(W,X,p):
@@ -23,7 +26,7 @@ def matrix_exp_left(W,X,p):
             for k in range(m2):
                 tmp = mod_exp(W[k,j],X[i,k],p)
                 M[i,j] = M[i,j]*tmp % p
-    return M.astype('int32')
+    return M.astype('int64')
 
 def matrix_exp_right(W,X,p):
     """
@@ -38,12 +41,18 @@ def matrix_exp_right(W,X,p):
             for k in range(n2):
                 tmp = mod_exp(W[i,k],X[k,j],p)
                 M[i,j] = M[i,j]*tmp % p
-    return M.astype('int32')
+    return M.astype('int64')
 
 def hadamard_prod(A,B,p):
+    """
+    Hadamar product
+    """
     return np.mod(np.multiply(A,B),p)
 
 def mulinv(number, modulo):
+    """
+    Multiplicatively inverse element
+    """
     if(math.gcd(number, modulo) != 1):
         #"Inverse element does not exist"
         return -1
@@ -62,21 +71,17 @@ def mulinv(number, modulo):
     return out
 
 def hadamard_inv(M,p):
+    """
+    Inverse with respect of Hadamar operator
+    """
     H = None
     fm = np.vectorize(lambda x: mulinv(x,p))
     H=fm(M)
     return H
 
 def Shifting_bits(row,k):
+    """
+    Bit shifting by k positions
+    """
     part = row[2:k+2]
     return row[:2]+row[k+2:] + part
-    
-
-
-"""
-function sf = Shifting_bits(row, k)
-
-part = row(1:k);
-sf = strcat(row(k+1:end), part);
-
-end"""
