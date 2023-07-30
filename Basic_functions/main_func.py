@@ -4,6 +4,12 @@ import math
 def mod_exp(g,n,p):
     """
     Modular exponenet function
+    Input:
+        g - generator
+        n - power
+        p - group order
+    Output:
+        r = g^n mod p
     """
     r = 1
     while(n > 0):
@@ -16,6 +22,12 @@ def mod_exp(g,n,p):
 def matrix_exp_left(W,X,p):
     """
     Function allows to raise matrix W by matrix power X from the left side modulo p
+    Input:
+        W - base matrix
+        X - matrix power
+        p - group order
+    Output:
+        M =  ^X W mod p
     """
     n1, _ = W.shape
     _, m2 = X.shape
@@ -31,6 +43,12 @@ def matrix_exp_left(W,X,p):
 def matrix_exp_right(W,X,p):
     """
     Function allows to raise matrix W by matrix power X from the right side modulo p
+    Input:
+        W - base matrix
+        X - matrix power
+        p - group order
+    Output:
+        M =  W ^X mod p
     """
     _, n2 = W.shape
     m1, _ = X.shape
@@ -46,12 +64,23 @@ def matrix_exp_right(W,X,p):
 def hadamard_prod(A,B,p):
     """
     Hadamar product
+    Input:
+        A - first term
+        B - second term
+        p - group order
+    Output:
+        Hadamard multiplication result
     """
     return np.mod(np.multiply(A,B),p)
 
 def mulinv(number, modulo):
     """
     Multiplicatively inverse element
+    Input:
+        number - element which inverse we want to find
+        modulo - group order
+    Output:
+        out - Inverse element
     """
     if(math.gcd(number, modulo) != 1):
         #"Inverse element does not exist"
@@ -73,6 +102,11 @@ def mulinv(number, modulo):
 def hadamard_inv(M,p):
     """
     Inverse with respect of Hadamar operator
+    Input:
+        M - Initial matrix
+        p - group order
+    Output:
+        H - inverse with respect to hadamard product operator
     """
     H = None
     fm = np.vectorize(lambda x: mulinv(x,p))
@@ -82,6 +116,11 @@ def hadamard_inv(M,p):
 def Shifting_bits(row,k):
     """
     Bit shifting by k positions
+    Input:
+        row - bits row
+        k - how many bits
+    Output:
+        Shifted bits row
     """
     part = row[2:k+2]
     return row[:2]+row[k+2:] + part

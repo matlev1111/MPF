@@ -6,14 +6,24 @@ from M16 import *
 def E_sak_CBC(IV,M, G, X, Y,Z, rounds, p,q):
     """
     CBC mode used with algorithm based on commutative group 
+    Inputs:
+        IV - vector of inicialization
+        M - plaintext
+        G - list of indexes for mapping
+        X - private key matrix
+        Y - private key matrix
+        Z - private key matrix
+        rounds - number of rounds
+        p - group order
+        q - Syllow subgroup order
+    Output:
+        CF - ciphertext of all rounds
     """
     m = X.shape[0]
     Fmap = Gmap(G,Z)
     CF = np.zeros([m,m,rounds+1], dtype='int64')
     CF[:,:,0] = IV
     for i in range(rounds):
-        """if(i % 100 == 0):
-            print(i/rounds*100)"""
         M1 = np.mod(CF[:,:,i]+M[:,:,i],q)#np.mod(CF[:,:,i]+M[:,:,i],q)#np.mod(np.bitwise_xor(CF[:,:,i],M[:,:,i]),q)
         C = ESakCipher(G,X,M1,Y,p,q, Fmap)
         CF[:,:,i+1] = C
@@ -22,24 +32,27 @@ def E_sak_CBC(IV,M, G, X, Y,Z, rounds, p,q):
 def E_sak_CTR(M, G, X, Y, Z, rounds, p,q):
     """
     CTR mode used with algorithm based on commutative group
+    Inputs:
+        M - plaintext
+        G - list of indexes for mapping
+        X - private key matrix
+        Y - private key matrix
+        Z - private key matrix
+        rounds - number of rounds
+        p - group order
+        q - Syllow subgroup order
+    Output:
+        CF - ciphertext of all rounds
     """
     m = X.shape[0]
     Fmap = Gmap(G,Z)
     Cnt = np.random.randint(1,q,size=(m,m)).astype('int32')
-    """Cnt = np.matrix([
-   [487,   455,   365,   283],
-   [401,   181,   263,   341],
-   [487,   219,   243,     8],
-     [0,   320,     0,     0]
-    ])"""
     Cnt[m-1,m-1] = 0
     Cnt[m-1,m-2] = 0
     Cnt[m-1,m-3] = 0
     Cnt[m-1,m-4] = 0
     CF = np.zeros([m,m,rounds])
     for i in range(rounds):
-        """if(i % 100 == 0):
-            print(i/rounds*100)"""
         M1 = Cnt.copy()
         Cnt[m-1,m-1] += 1
         pind = m-1
@@ -48,15 +61,17 @@ def E_sak_CTR(M, G, X, Y, Z, rounds, p,q):
             Cnt[m-1,pind-1] += 1
             pind -= 1
         C = ESakCipher(G,X,M1,Y,p,q, Fmap)
-        """print("C", C)
-        print("M", M[:,:,i]+255)"""
         CF[:,:,i] = np.mod(C+M[:,:,i],q)#np.mod(np.bitwise_xor(C,M[:,:,i]),q)
-        #print("CF", CF[:,:,i])
     return CF.astype('int32')
 
 def merg2mat(M1, M2):
     """
     Merging two matrices into one, making 16-bit element
+    Inputs:
+        M1 - First matrix
+        M2 - second matrix
+    Output:
+     NM - merged matrix
     """
     m = len(M1)
     NM = np.zeros(M1.shape)
@@ -68,6 +83,11 @@ def merg2mat(M1, M2):
 def spl2mat(M):
     """
     Split matrix into 2, 4-bit elements
+    Inputs:
+        M - initial matrix for splitting
+    Outputs:
+        M1 - First matrix
+        M2 - second matrix
     """
     M1 = np.zeros(M.shape)
     M2 = np.zeros(M.shape)
@@ -81,9 +101,17 @@ def spl2mat(M):
 def Form_pic_blocks(m, X1, rgb, nb=8):
     """
     Making block from Picture
+    Inputs:
+        m - matrix order
+        X1 - Initial picture
+        rgb - format 1 - grayscale, 3 - rgb
+        nb - number of bits
+    Output:
+        s1 - number of rows
+        s2 - number or columns
+        M1 - New matrix
     """
     ss = X1.shape
-    #print(ss)
     if(ss[0]%m != 0):
         s1 = (ss[0]//m+1)*m
     else:
@@ -92,7 +120,6 @@ def Form_pic_blocks(m, X1, rgb, nb=8):
         s2 = (ss[1]//m+1)*m
     else:
         s2 = ss[1]//m*m
-    #print(s1,s2)
     if(rgb == 3):
         ZZ = np.zeros([s1, s2, rgb])
         ZZ[:ss[0],:ss[1],:] = X1
@@ -140,6 +167,12 @@ def Form_pic_blocks(m, X1, rgb, nb=8):
 def Form_text_blocks(m, text_file, nb = 8):
     """
     Making blocks from text
+    Inputs:
+        m - matrix order
+        text_file - name of the text file
+        nb - number of bits
+    Output:
+        M1 - new formed matrix
     """
     unicode_file = open(text_file,encoding='utf-8')
     txt = unicode_file.read()
@@ -150,7 +183,6 @@ def Form_text_blocks(m, text_file, nb = 8):
     #Splits 8bit elements into 2 4bit elements
     for i in range(len(strl)):
         sk = strl[i]
-        #print(sk)
         if(nb == 4):
             for ii in range(len(sk)):
                 NM.append(int(sk[ii],base = 16))
@@ -175,6 +207,20 @@ def Form_text_blocks(m, text_file, nb = 8):
 
 
 def M16_CTR(M, Ma, X, Y2, rounds, t, nbits, delta):
+    """
+    M16 CTR mdoe of encryption
+    Inputs:
+        M - plaintext
+        Ma - list for mapping
+        X - private key matrix
+        Y2- private key matrix
+        rounds - number of rounds
+        t - group order
+        delta - private key matrix
+        nbits- number of bits for shift function
+    Output:
+        CF - ciphertext of all rounds
+        """
     m = X.shape[0]
     Cnt = np.random.randint(0,np.power(2,t),size=(m,m,1)).astype('int32')
     pp = 5
@@ -199,6 +245,21 @@ def M16_CTR(M, Ma, X, Y2, rounds, t, nbits, delta):
     return CF
 
 def M16_CBC(IV,M, Ma, X, Y2, rounds, t, nbits, delta):
+    """
+    M16 CBC mode of encryption
+    Inputs:
+        IV - vector of inicialization
+        M - plaintext
+        Ma - list for mapping
+        X - private key matrix
+        Y2- private key matrix
+        rounds - number of rounds
+        t - group order
+        delta - private key matrix
+        nbits- number of bits for shift function
+    Output:
+        CF - ciphertext of all rounds
+        """
     m = X.shape[0]
     CF = np.zeros([m,m,rounds+1], dtype='int32')
     CF[:,:,0] = IV

@@ -708,23 +708,21 @@ def testStr(cleartext, keysize=16, modeName = "CBC"):
     decr = decryptData(key, cipher, mode)
     print ('Decrypted:', decr)
     
-    
+
+#Commented part is for pictures
 def main():
     moo = AESModeOfOperation()
+    m = 4
     #im = Image.open("images/cameraman.tif").convert('L')#Image.open("coloredChips.png")
     #X1 = np.asarray(im)
-    m = 4
     #s1, s2, M1 = Form_pic_blocks(m, X1,1)
     #blsize = M1.shape[2]
-    #print(type(list(M1.reshape([1,m*m*M1.shape[2]])[0])))
     #M2 = M1.reshape([1,m*m*blsize])
-    #print(m*m*blsize)
-    #print((M1 == M2.reshape([m,m,blsize])).sum())
     M1 = Form_text_blocks(m, 'Generated.txt', nb = 8)
     blsize = M1.shape[2]
-    cleartext = list(M1.reshape([1,m*m*M1.shape[2]])[0])#"This is a test with several!"*8200
-    cypherkey = np.random.randint(0,255,size=(1,16))[0]#[143,194,34,208,145,203,230,143,177,246,97,206,145,92,255,84]
-    iv = np.random.randint(0,255,size=(1,16))[0]#[103,35,148,239,76,213,47,118,255,222,123,176,0,0,0,0]
+    cleartext = list(M1.reshape([1,m*m*M1.shape[2]])[0])
+    cypherkey = np.random.randint(0,255,size=(1,16))[0]
+    iv = np.random.randint(0,255,size=(1,16))[0]
     iv[-4:] = [0,0,0,0]
     start = timer()
     mode, orig_len, ciph = moo.encrypt(cleartext, moo.modeOfOperation["CTR"],
@@ -734,25 +732,24 @@ def main():
 
     print ('m=%s, ol=%s (%s), ciph=%s' % (mode, orig_len, len(cleartext), len(ciph)))
     data = np.reshape(ciph,[m,m,blsize])
-    """print(data.shape)
-    ans = Print_pic(data[:,:,:], s1, s2, 1)"""
-    """decr = moo.decrypt(ciph, orig_len, mode, cypherkey,
-            moo.aes.keySize["SIZE_128"], iv)
-    data = np.reshape(decr,[m,m,blsize])
-    ans = Print_pic(data[:,:,:], s1, s2, 0)"""
+    #ans = Print_pic(data[:,:,:], s1, s2, 1)
+    #ans = Print_pic(data[:,:,:], s1, s2, 0)"""
+
     file_name = 'Generated'
     #Algorithm: M16, Esak
     file_folder = 'AES'
     #Mode: CTR, CBC
     mode = 'CTR'
+
+    #Saving
     #file = open(f'res/{mode}/{file_folder}/{file_name}', 'wb')
     #pickle.dump([data, M1, s1, s2], file)
     #pickle.dump([data, M1], file)
     #file.close()
-    #print (decr)
-   # testStr(cleartext, 16, "CBC")
     return data
 
+
+#Number of iterations
 sk = 100
 for i in range(sk):
     tmp = main()

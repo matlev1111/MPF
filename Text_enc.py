@@ -9,6 +9,14 @@ from modes import E_sak_CBC as Forward, Form_pic_blocks
 import math
 
 def Form_text_blocks(m, text_file):
+    """
+    Form text block from the text file
+    Inputs:
+        m - matrix order
+        text_file - text file name
+    Output:
+        M1 - new matrix
+    """
     unicode_file = open(text_file)
     txt = unicode_file.read()
     strl = list()

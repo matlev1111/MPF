@@ -16,6 +16,18 @@ im.show()
 """
 
 def M16CBC_F(m, file_name, save = False, rgb = 'L', nb = 8):
+    """
+    CBC mode of operation excryption
+    Commented parts are for text
+    Input:
+        m - matrix order
+        file_name - file name
+        save - True to save, False not to save
+        rgb - 'L' grayscale, 'RGB' - RGB
+        nb - number of bits, default 8bits
+    Output:
+        Time how long the encryption lasted, if save = True, ciphertext is saved as pickle file
+    """
     #file_name = 'linux'
     #Algorithm: M16, Esak
     file_folder = 'M16'
@@ -51,8 +63,7 @@ def M16CBC_F(m, file_name, save = False, rgb = 'L', nb = 8):
     start = timer()
     C = Forward(IV,M1, Ma, X, Y2, Nblocks, t, nbits, delta)
     end = timer()
-    #print(timedelta(seconds=end-start))
-
+    #Chi-square test
     #unique, counts = np.unique(np.array(C[:,:,1:]), return_counts=True)
     #print(stats.chisquare(f_obs=counts, f_exp=np.ones(np.power(2,t), dtype = 'int64')*(Nblocks*m*m/np.power(2,t))))
     if(save):

@@ -9,6 +9,18 @@ import scipy.stats as stats
 from modes import E_sak_CTR as Forward, Form_pic_blocks , Form_text_blocks
 
 def CTR_F(m, file_name, save = False, rgb = 'L', nb = 8):
+    """
+    CTR mode of operation excryption
+    Commented parts are for text
+    Input:
+        m - matrix order
+        file_name - file name
+        save - True to save, False not to save
+        rgb - 'L' grayscale, 'RGB' - RGB
+        nb - number of bits, default 8bits
+    Output:
+        Time how long the encryption lasted, if save = True, ciphertext is saved as pickle file
+    """
     #file_name = 'linux'
     #Algorithm: M16, Esak
     file_folder = 'Esak'
@@ -38,21 +50,18 @@ def CTR_F(m, file_name, save = False, rgb = 'L', nb = 8):
     C = Forward(M1, G, X, Y, Z, Nblocks, p, q)
     end = timer()
     print(timedelta(seconds=end-start))   
-    #unique, counts = np.unique(np.array(C), return_counts=True)
-    #q = int(q)
-    #print(stats.chisquare(f_obs=counts, f_exp=np.ones(q, dtype = 'int64')*(Nblocks*m*m/q)))
+    """Chi-square hypothesis
+    unique, counts = np.unique(np.array(C), return_counts=True)
+    q = int(q)
+    print(stats.chisquare(f_obs=counts, f_exp=np.ones(q, dtype = 'int64')*(Nblocks*m*m/q)))
+    """
     if(save):
         file = open(f'res/{mode}/{file_folder}/{file_name}_4x4_addmod', 'wb')
         pickle.dump([C, M1, s1, s2], file)
         #pickle.dump([C, M1], file)
         file.close()
     return end-start
-TM = 0
-FT = []
 
 CTR_F(4, 'Generated8',save = False, nb = 16)
 
-
-
-#CTR_F(4, 'Generated',save = True, nb = 8)
 

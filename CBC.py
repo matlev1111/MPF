@@ -9,12 +9,24 @@ import scipy.stats as stats
 from modes import E_sak_CBC as Forward, Form_pic_blocks, Form_text_blocks
 
 def CBC_F(m, file_name, save = False, rgb = 'L', nb = 8):
+    """
+    CBC mode of operation excryption
+    Commented parts are for text
+    Input:
+        m - matrix order
+        file_name - file name
+        save - True to save, False not to save
+        rgb - 'L' grayscale, 'RGB' - RGB
+        nb - number of bits, default 8bits
+    Output:
+        Time how long the encryption lasted, if save = True, ciphertext is saved as pickle file
+    """
     #file_name = 'linux'
     #Algorithm: M16, Esak
     file_folder = 'Esak'
     #Mode: CTR, CBC
     mode = 'CBC'
-    im = Image.open(f"images/{file_name}").convert(rgb)#Image.open("coloredChips.png")
+    im = Image.open(f"images/{file_name}").convert(rgb)
     X1 = np.asarray(im)
     if(nb == 4):
         p = 47
@@ -30,6 +42,7 @@ def CBC_F(m, file_name, save = False, rgb = 'L', nb = 8):
     start = timer()
     s1, s2, M1 = Form_pic_blocks(m, X1,prgb, nb=nb)
     print("Generavimo laikai - ",timer()-start)
+    #For text encryption
     #M1 = Form_text_blocks(m, 'Generated.txt', nb = nb)
 
     IV = np.zeros([m,m], dtype=int)

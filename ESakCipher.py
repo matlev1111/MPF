@@ -5,6 +5,10 @@ from Basic_functions.Gauss_Jordan import Gauss_Jordan
 def GenG(p):
     """
     Generates index and number list of the mapping function
+    Input:
+        p - group order
+    Output:
+        numbers - list of generated numbers
     """
     q = (p-1)//2
     index = 3
@@ -19,6 +23,11 @@ def GenG(p):
 def Gmap(index, mat):
     """
     Maps matrix elements using function f
+    Input:
+        index - list of indices for mapping
+        mat - Matrix which is going to be mapped
+    Output:
+        M - mapped matrix
     """
     try:
         m = len(mat)
@@ -32,6 +41,11 @@ def Gmap(index, mat):
 def imap(ind, num):
     """
     Performs an inverse mapping F^{-1}
+    Input:
+        ind - list of indices for mapping
+        num - Matrix which is going to be mapped
+    Output:
+        M - mapped matrix 
     """
     try:
         m = len(num)
@@ -47,13 +61,22 @@ def imap(ind, num):
 
 def ESakCipher(G,X,M,Y,p,q,Fmap):
     """
+    Cipher algorith
     G = GenG(p)
-    X \in 
-    M \in 
+    X \in Z_q
+    M \in Z_q
     Y \in Z_q \ {0}
+    Inputs:
+        G - list of indices for mapping
+        X - private key
+        M - plaintext
+        Y - private key
+        p - group order
+        q - Syllow subgroup order 
+        Fmap - Mapped values
+    Output:
+        Ciphertext
     """
-    #q = (p-1)//2
-    #Fmap = Gmap(G,X)
     C1 = np.mod(X+M,q).astype('int64')
     F = Gmap(G,C1)
     YF = matrix_exp_left(F,Y,p)
@@ -64,6 +87,14 @@ def ESakCipher(G,X,M,Y,p,q,Fmap):
 def ESakDecryption(G, YY, X, C,p):
     """
     Decryption algorythm
+    Input:
+        G - list of indices for mapping
+        YY - inverse private key Y
+        X - private key X
+        C - ciphertext
+        p - group order
+    Output:
+        Deciphered ciphertext
     """
     q = (p-1)//2
     FF = hadamard_inv(Gmap(G,X),p)
@@ -76,6 +107,15 @@ def ESakDecryption(G, YY, X, C,p):
 def Gen_parameters(m, p):
     """
     Parameters generation
+    Inputs:
+        m - matrix order
+        p - group order
+    Output:
+        q - part of strong prime p = 2*q+1
+        G - List of indices for mapping
+        X - private key
+        Y - private key
+        Z - private key
     """
     q = (p-1)/2
     G = GenG(p)

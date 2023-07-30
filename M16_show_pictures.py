@@ -24,6 +24,16 @@ if(file_folder == 'ESak'):
     data = np.mod(data,256)
 
 def Print_pic(C, s1, s2, d3):
+    """
+    Form array for picture printing
+    Inputs:
+        C - Ciphertext
+        s1 - number of rows
+        s2 - number of columns
+        d3 - boolean for rgb/grayscale
+    Output:
+        Reshaped ciphertext for printing
+    """
     m = C[:,:,0].shape[0]
     if(d3):
         rgb = 3
@@ -52,6 +62,3 @@ elif(mode == 'CTR'):
     ans = Print_pic(data[:,:,:], s1, s2, rgb_TF)
 
 ans.save(rez_path)
-
-
-#ans.show()

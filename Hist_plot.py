@@ -4,6 +4,16 @@ import numpy as np
 from PIL import Image
 
 def Print_pic(C, s1, s2, d3):
+    """
+    Form array for picture printing
+    Inputs:
+        C - Ciphertext
+        s1 - number of rows
+        s2 - number of columns
+        d3 - boolean for rgb/grayscale
+    Output:
+        Reshaped ciphertext for printing
+    """
     m = C[:,:,0].shape[0]
     if(d3):
         rgb = 3

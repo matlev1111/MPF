@@ -16,6 +16,18 @@ im.show()
 """
 
 def M16CTR_F(m, file_name, save = False, rgb = 'L', nb = 8):
+    """
+    CTR mode of operation excryption
+    Commented parts are for text
+    Input:
+        m - matrix order
+        file_name - file name
+        save - True to save, False not to save
+        rgb - 'L' grayscale, 'RGB' - RGB
+        nb - number of bits, default 8bits
+    Output:
+        Time how long the encryption lasted, if save = True, ciphertext is saved as pickle file
+    """
     #file_name = 'coloredChips_NoY'
     #file_name = 'linux'
     #Algorithm: M16, Esak
@@ -23,7 +35,7 @@ def M16CTR_F(m, file_name, save = False, rgb = 'L', nb = 8):
     #Mode: CTR, CBC
     mode = 'CTR'
 
-    im = Image.open(f"images/{file_name}").convert(rgb)#Image.open("coloredChips.png")
+    im = Image.open(f"images/{file_name}").convert(rgb)
     X1 = np.asarray(im)
 
     t = nb

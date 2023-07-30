@@ -1,6 +1,14 @@
 import numpy as np
 
 def Gauss_Jordan(Am,p):
+    """
+    Find an inverse of a matrix by applying Gauss-Jordan method
+    Input:
+        Am - Matrix which inverse we want to find
+        p - prime number of a groupd matrix is defined of
+    Output:
+        Inverse matrix, or empty list if inverse matrix is non existing
+    """
     A = Am.copy()
     n = len(A)
     B = np.eye(n). astype('int32')
@@ -27,6 +35,18 @@ def Gauss_Jordan(Am,p):
 
 
 def Out(A,B,a,n,p):
+    """
+    Second step of Gauss-Jordan method making top right zeroes triange
+    Input:
+        A - Initial matrix
+        B - matrix helper, later inverse matrix
+        a - index of diagonal elements
+        n - matrix order
+        p - group order
+    Output:
+        A - modified matrix, at the end identitiy matrix
+        B - modified matrix, at the end inverse matrix
+    """
     for i in reversed(range(a)):
         mult = p-np.mod(A[i,a],p)
         for j in range(n):
@@ -35,11 +55,31 @@ def Out(A,B,a,n,p):
     return A,B
 
 def Change(A,n,a,pab,p):
+    """
+    Add bottom row to the top if element [a,a] is zero
+    Input:
+        A - Initial matrix
+        n - matrix order
+        a - index of [a,a] element
+        pab - non-zero element row index
+        p - hroup order
+    Output:
+        A - modified matrix
+    """
     for j in range(n):
         A[a,j] = np.mod(A[a,j]+A[pab,j],p)
     return A
 
 def Search(n, A,a):
+    """
+    Searching for non-zero element in a column and returning index
+    Input:
+        n - matrix order
+        A - Initial matrix
+        a - index of a column
+    Output:
+        index of a row with non-zero element
+    """
     for i in range(a,n):
         if(np.mod(A[i,a],2)!= 0):
             return i
@@ -64,6 +104,17 @@ def extended_euclid_gcd(a, b):
     return [old_r, old_s, old_t]
 
 def Division(A,el,n,p,i,tikr,B):
+    """
+    Dividing row elements by a specific number (multiplied by an inverse)
+    Input:
+        A - Initial matrix which  we want to change
+        el - element which inverse we are looking for
+        n - matrix order
+        p - order of a group
+        i - row index
+        tikr - boolean allowing to tell if we can find inverse matrix or not
+        B - identity matrix at first (changing after each step)
+    """
     d,x,_ = extended_euclid_gcd(el, p)
     if(d and tikr):
         sk = np.mod(x,p)
@@ -75,11 +126,35 @@ def Division(A,el,n,p,i,tikr,B):
     return A, B, tikr
 
 def Sign(A,n,p,i):
+    """
+    Changing sign of a row
+    Input:
+        A - Initial matrix which signs we want to change
+        n - matrix order
+        p - order of a group
+        i - row index
+    Output:
+        A - Modified initial matrix
+    """
     for j in range(n):
         A[i,j] = A[i,j]+p
     return A
 
 def In(A,B,a,n,p,tikr):
+    """
+    Gauss-Jordan going down step, making bottom zeroes triangle
+    Input:
+        A - Matrix which inverse we want to find
+        B - identity matrix at first (changing after each step)
+        a - index for main diagonal
+        n - matrix order
+        p - order of the group
+        tikr - boolean allowing to tell if we can find inverse matrix or not
+    Output:
+        A - modified initial matrix
+        B - modified initial matrix
+        tikr - boolean allowing to tell if we can find inverse matrix or not
+    """
     if(tikr):
         if(A[a,a]<0):
             A = Sign(A,n,p,a)

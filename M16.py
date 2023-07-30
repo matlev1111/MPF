@@ -5,6 +5,12 @@ from Basic_functions.main_func import Shifting_bits
 def m16mult(a, b, t):
     """
     Multiplication operation defined over M_{2^t}
+    Inputs:
+        a - First element list consisting of generator a and b powers
+        b - Second element list consisting of generator a and b powers
+        t - group order
+    Output:
+        C - list of generator a and b powers
     """
     C = np.zeros([2])
     C[0] = np.mod(a[0]+b[0],2)
@@ -21,6 +27,12 @@ def m16mult(a, b, t):
 def m16exp(a, n, t):
     """
     Power operation defined over M_{2^t}
+    Inputs:
+        a - First element list consisting of generator a and b powers
+        n - degree of power
+        t - group order
+    Output:
+        b - list of generator a and b powers
     """
     b = np.zeros([2])
     if(np.mod(a[0],2)):
@@ -38,6 +50,12 @@ def m16exp(a, n, t):
 def m16_matrix_exp_right(W,X,t):
     """
     MPF from the right side over M_{2^t}
+    Inputs:
+        W - base matrix
+        X - power matrix
+        t - group order
+    Output:
+        B - result of matrix power function from the right
     """
     m, _, _ = W.shape
     _, n = X.shape
@@ -53,6 +71,12 @@ def m16_matrix_exp_right(W,X,t):
 def m16_matrix_exp_left(W,X,t):
     """
     MPF from the left side over M_{2^t}
+    Inputs:
+        W - base matrix
+        X - power matrix
+        t - group order
+    Output:
+        B - result of matrix power function from the left
     """
     m, _, _ = W.shape
     _, n = X.shape
@@ -69,6 +93,15 @@ def m16_matrix_exp_left(W,X,t):
 def M16_Enc(M,delta, X,Y,t, nbits):
     """
     Encryption algorithm defined over M_{2^t}
+    Inputs:
+        M - plaintext
+        delta - private key
+        X - private key
+        Y - private key
+        t - group order
+        nbits - number of bits for the shift
+    Output:
+        C4 - Ciphertext
     """
     m,_ = X.shape
     M_inp = M.copy()
@@ -90,6 +123,15 @@ def M16_Enc(M,delta, X,Y,t, nbits):
 def M16_Dec(C,delta, X,YY,t, nbits):
     """"
     Decryption algorythm defined over M_{2^t}
+    Inputs:
+        C - ciphertext
+        delta - private key
+        X - private key
+        YY - inverse of private key Y
+        t - group order
+        nbits - number of bits for a shift
+    Outputs:
+        D5 - deciphered ciphertext
     """
     m,_ = X.shape
     DX = np.zeros([m,m])
@@ -114,6 +156,13 @@ def M16_Dec(C,delta, X,YY,t, nbits):
 def FormM(C, m, Ma, amount):
     """
     Mapping M elements to M_b & M_a elements
+    Inputs:
+        C - matrix which needs to be mapped
+        m - matrix order
+        Ma - List for mapping
+        amount - number of matrices for mapping
+    Output:
+        M - mapped matrix
     """
     M = np.zeros([m,m,amount,2])
     for a in range(amount):
@@ -128,6 +177,11 @@ def FormM(C, m, Ma, amount):
 def perm_matrix(n,t):
     """
     Permutation matrix generation
+    Inputs:
+        n - matrix order
+        t - group order
+    Output
+        D - permutation matrix
     """
     A = np.eye(n)
     A = np.random.permutation(A)
@@ -139,6 +193,10 @@ def perm_matrix(n,t):
 def MakeVector(m):
     """
     Constructin permutation vector
+    Inputs:
+        m - matrix order
+    Output:
+        Permutation vector
     """
     Vec = np.arange(0,m*m)
     return np.random.permutation(Vec)
@@ -146,6 +204,13 @@ def MakeVector(m):
 def BuildPlaintext(VVec, m, M,pp):
     """
     Form plaintext using permutation vector mapping
+    Inputs:
+        VVec - Permutation vectors
+        m - matrix order
+        M - Plaintext
+        pp - group order for permutation vectors
+    Output:
+        NM - Mapped maprix M
     """
     if(VVec == None):
         return M
